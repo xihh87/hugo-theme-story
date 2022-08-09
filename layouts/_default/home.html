@@ -1,18 +1,30 @@
-{{ define "title" }}{{ cond (eq .Site.Params.titlecase true) (.Title | title | markdownify) (.Title | markdownify) }}{{ end }}
-
+{{ define "title" }}{{ .Section | title }} &bullet; {{ .Site.Title }}{{ end }}
 {{ define "main" }}
-<article class="center bg-white br-3 pv1 ph4 lh-copy f5 nested-links mw7">
-	{{ .Content }}
-</article>
+<div class="pa3 pa4-ns w-100 w-70-ns center">
+  <section class="w-100 mw8">
+  <!-- list all talks; list non-future slides; else list things that are not future and not slides -->
+  {{ $pages := where .Paginator.Pages ".Params.skip" "ne" "true" }}
+  {{ if eq .Section "talks" }}
+    {{ range $pages }}
+      {{ partial "li.html" . }}
+    {{ end }}
+  {{ else if eq .Section "slides" }}
+    {{ range where $pages ".Date.Unix" "<" now.Unix }}
+      {{ partial "li.html" . }}
+    {{ end }}
+  {{ else }}
+    {{ range where (where $pages ".Date.Unix" "<" now.Unix) "Section" "ne" "slides" }}
+      {{ partial "li.html" . }}
+    {{ end }}
+  {{ end }}
+  </section>
+</div>
 {{ end }}
 
-{{ define "social" }}
-		<meta property="og:title" content="{{ cond (eq .Site.Params.titlecase true) (.Title | title | markdownify) (.Title | markdownify) }}" />
-		<meta property="og:type" content="article" />
-		<meta property="og:image" content="{{ default "img/default-header-img.jpg" .Params.image | absURL }}" />
-		<meta property="og:description" content="{{ .Description | markdownify }}" />
-		<meta property="og:url" content="{{ .Permalink }}" />
-		<meta property="og:site_name" content="{{ cond (eq .Site.Params.titlecase true) (.Title | title | markdownify) (.Title | markdownify) }}" />
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:site" content="@{{ .Site.Params.twitter }}" />
+{{ define "pagination" }}
+<footer class="w-100 sans-serif" role="contentinfo">
+	<nav class="w-third-l pb3 f6 center db" role="navigation">
+		{{- template "_internal/pagination.html" . -}}
+	</nav>
+</footer>
 {{ end }}
