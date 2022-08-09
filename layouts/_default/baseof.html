@@ -65,7 +65,7 @@
 
 				<nav class="hide-print sans-serif {{ cond $hdr "" "bg-black" }} border-box pa3 ph5-l">
 					<a href="{{ .Site.BaseURL }}" title="Home">
-						<img src="{{ "img/logo.jpg" | absURL }}" class="w2 h2 br-100" alt="{{ .Site.Title }}" />
+						<img src="{{ .Site.Params.logo | absURL }}" style="max-height:10em;background:white;" alt="{{ .Site.Title }}" />
 					</a>
 					<div class="fr h2 pv2 tr">
 						{{- range .Site.Menus.main }}
